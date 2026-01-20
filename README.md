@@ -200,4 +200,8 @@ docker compose up --build
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For API access, on-premise deployment inquiries, or any questions, please contact: adammajcher20@gmail.com
