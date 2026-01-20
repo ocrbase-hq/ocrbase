@@ -9,9 +9,21 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string().min(32),
     BETTER_AUTH_URL: z.url(),
     CORS_ORIGIN: z.url(),
-    DATABASE_URL: z.string().min(1),
+    DATABASE_URL: z.url(),
+    GITHUB_CLIENT_ID: z.string().optional(),
+    GITHUB_CLIENT_SECRET: z.string().optional(),
+    HOST: z.string().default("localhost"),
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),
+    OPENROUTER_API_KEY: z.string().optional(),
+    PADDLE_OCR_URL: z.url().default("http://localhost:8080"),
+    PORT: z.coerce.number().default(3000),
+    REDIS_URL: z.url().optional(),
+    S3_ACCESS_KEY: z.string().optional(),
+    S3_BUCKET: z.string().default("ocrbase"),
+    S3_ENDPOINT: z.url().optional(),
+    S3_REGION: z.string().default("us-east-1"),
+    S3_SECRET_KEY: z.string().optional(),
   },
 });
