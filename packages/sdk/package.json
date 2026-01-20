@@ -1,0 +1,40 @@
+{
+  "name": "@ocrbase/sdk",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./react": {
+      "default": "./src/react/index.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@elysiajs/eden": "^1.4.6",
+    "elysia": "catalog:"
+  },
+  "devDependencies": {
+    "@ocrbase/config": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "@types/react": "catalog:",
+    "react": "catalog:",
+    "server": "workspace:*",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": ">=5.0.0",
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-query": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  }
+}

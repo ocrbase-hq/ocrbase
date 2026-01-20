@@ -19,8 +19,8 @@
   "dependencies": {
     "@ocrbase/env": "workspace:*",
     "dotenv": "catalog:",
-    "drizzle-orm": "^0.45.1",
-    "nanoid": "^5.1.6",
+    "drizzle-orm": "catalog:",
+    "nanoid": "catalog:",
     "pg": "^8.17.1",
     "zod": "catalog:"
   },

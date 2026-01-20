@@ -11,28 +11,114 @@ OCRBase provides:
 - Custom schema support for targeted data extraction
 - Real-time job status updates via WebSocket
 - RESTful API with OpenAPI documentation
+- **Type-safe TypeScript SDK** with React hooks
+
+## Architecture
+
+![Architecture Diagram](docs/architecture.svg)
 
 ## Tech Stack
 
-- **Bun** - Runtime environment
-- **Elysia** - Type-safe, high-performance API framework
-- **Drizzle** - TypeScript-first ORM
-- **PostgreSQL** - Database
-- **Redis** - Queue management and pub/sub
-- **MinIO** - S3-compatible object storage
-- **PaddleOCR** - OCR engine
-- **Better-Auth** - Authentication
-- **BullMQ** - Job queue processing
-- **Turborepo** - Monorepo build system
+| Layer         | Technology                                                    |
+| ------------- | ------------------------------------------------------------- |
+| Runtime       | [Bun](https://bun.sh/)                                        |
+| API Framework | [Elysia](https://elysiajs.com/)                               |
+| SDK           | [Eden Treaty](https://elysiajs.com/eden/treaty/overview.html) |
+| Database      | PostgreSQL + [Drizzle ORM](https://orm.drizzle.team/)         |
+| Queue         | Redis + [BullMQ](https://bullmq.io/)                          |
+| Storage       | S3/MinIO                                                      |
+| OCR           | [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)        |
+| Auth          | [Better-Auth](https://better-auth.com/)                       |
+| Build         | [Turborepo](https://turbo.build/)                             |
 
-## Prerequisites
+## Quick Start
+
+### Using the SDK (Recommended)
+
+```bash
+bun add @ocrbase/sdk
+```
+
+```typescript
+import { createOCRBaseClient } from "@ocrbase/sdk";
+
+const client = createOCRBaseClient({ baseUrl: "http://localhost:3000" });
+
+// Upload and process a document
+const job = await client.jobs.create({
+  file: document,
+  type: "parse", // or "extract" for structured data
+});
+
+// Subscribe to real-time updates
+client.ws.subscribeToJob(job.id, {
+  onStatus: (status) => console.log("Status:", status),
+  onComplete: (data) => console.log("Result:", data.markdownResult),
+  onError: (error) => console.error("Error:", error),
+});
+
+// Or poll for results
+const result = await client.jobs.get(job.id);
+```
+
+### React Integration
+
+```bash
+bun add @ocrbase/sdk @tanstack/react-query
+```
+
+```tsx
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  OCRBaseProvider,
+  useJobs,
+  useCreateJob,
+  useJobSubscription,
+} from "@ocrbase/sdk/react";
+
+const queryClient = new QueryClient();
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <OCRBaseProvider config={{ baseUrl: "http://localhost:3000" }}>
+        <DocumentProcessor />
+      </OCRBaseProvider>
+    </QueryClientProvider>
+  );
+}
+
+function DocumentProcessor() {
+  const { data: jobs } = useJobs({ status: "completed" });
+  const createJob = useCreateJob();
+
+  const handleUpload = (file: File) => {
+    createJob.mutate({ file, type: "parse" });
+  };
+
+  return (
+    <div>
+      <input type="file" onChange={(e) => handleUpload(e.target.files![0])} />
+      <ul>
+        {jobs?.data.map((job) => (
+          <li key={job.id}>
+            {job.fileName} - {job.status}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+See [`packages/sdk/README.md`](./packages/sdk/README.md) for complete SDK documentation.
+
+## Self-Hosting
+
+### Prerequisites
 
 - [Bun](https://bun.sh/) installed globally
 - Docker Desktop running
-- PostgreSQL, Redis, MinIO containers
-- PaddleOCR container (GPU recommended)
-
-## Getting Started
 
 ### 1. Clone and Install
 
@@ -44,7 +130,7 @@ bun install
 
 ### 2. Environment Setup
 
-Create a `.env` file in the root directory:
+Create a `.env` file:
 
 ```bash
 # Required
@@ -74,113 +160,86 @@ GITHUB_CLIENT_ID=your-github-client-id
 GITHUB_CLIENT_SECRET=your-github-client-secret
 ```
 
-### 3. Start Infrastructure
+### 3. Start Services
 
 ```bash
+# Start infrastructure
 docker compose up -d postgres redis minio paddleocr
-```
 
-### 4. Database Setup
-
-```bash
+# Setup database
 bun run db:push
-```
 
-### 5. Run the Application
-
-```bash
-# Start all services
+# Start API server + worker
 bun run dev
-
-# Or start individually
-bun run dev:server  # API server
-bun run dev:web     # Web frontend
 ```
 
-### 6. Start the Worker
+The API will be available at `http://localhost:3000`.
 
-In a separate terminal:
+## API Reference
 
-```bash
-cd apps/server
-bun run worker
+### REST Endpoints
+
+| Method   | Endpoint                 | Description        |
+| -------- | ------------------------ | ------------------ |
+| `GET`    | `/health/live`           | Liveness check     |
+| `GET`    | `/health/ready`          | Readiness check    |
+| `POST`   | `/api/jobs`              | Create OCR job     |
+| `GET`    | `/api/jobs`              | List jobs          |
+| `GET`    | `/api/jobs/:id`          | Get job            |
+| `DELETE` | `/api/jobs/:id`          | Delete job         |
+| `GET`    | `/api/jobs/:id/download` | Download result    |
+| `POST`   | `/api/schemas`           | Create schema      |
+| `GET`    | `/api/schemas`           | List schemas       |
+| `GET`    | `/api/schemas/:id`       | Get schema         |
+| `PATCH`  | `/api/schemas/:id`       | Update schema      |
+| `DELETE` | `/api/schemas/:id`       | Delete schema      |
+| `POST`   | `/api/schemas/generate`  | AI-generate schema |
+
+### WebSocket
+
+```
+WS /ws/jobs/:jobId
 ```
 
-## API Documentation
+Real-time job status updates. See SDK for type-safe usage.
 
-Once the server is running, access the OpenAPI documentation at:
+### OpenAPI
 
-- **Scalar UI**: http://localhost:3000/openapi
+Interactive documentation at: `http://localhost:3000/openapi`
 
 ## Project Structure
 
 ```
 ocrbase/
 ├── apps/
-│   ├── web/                 # Frontend application (TanStack Start)
+│   ├── web/                 # Frontend (TanStack Start)
 │   └── server/              # Backend API (Elysia)
 │       ├── src/
-│       │   ├── index.ts     # Entry point
-│       │   ├── app.ts       # Application composition
-│       │   ├── modules/     # Feature modules
-│       │   │   ├── health/  # Health check endpoints
-│       │   │   ├── jobs/    # Job management
-│       │   │   └── schemas/ # Schema management
+│       │   ├── modules/     # Feature modules (jobs, schemas, health)
 │       │   ├── plugins/     # Elysia plugins
-│       │   ├── services/    # Core services
-│       │   ├── workers/     # Background workers
-│       │   └── lib/         # Utilities
+│       │   ├── services/    # Core services (OCR, LLM, storage)
+│       │   └── workers/     # Background job processors
 ├── packages/
-│   ├── auth/               # Authentication (Better-Auth)
-│   ├── db/                 # Database schema (Drizzle)
-│   ├── env/                # Environment validation
-│   ├── config/             # Shared TypeScript config
-│   └── paddleocr-vl-ts/    # PaddleOCR TypeScript client
+│   ├── sdk/                 # TypeScript SDK (@ocrbase/sdk)
+│   ├── auth/                # Authentication (Better-Auth)
+│   ├── db/                  # Database schema (Drizzle)
+│   ├── env/                 # Environment validation
+│   └── paddleocr-vl-ts/     # PaddleOCR client
 └── docker-compose.yml
 ```
 
-## API Endpoints
+## Scripts
 
-### Health
-
-- `GET /health/live` - Liveness check
-- `GET /health/ready` - Readiness check with service status
-
-### Authentication
-
-- `POST /api/auth/*` - Better-Auth endpoints
-
-### Jobs
-
-- `POST /api/jobs` - Create OCR job (file upload or URL)
-- `GET /api/jobs` - List jobs with pagination
-- `GET /api/jobs/:id` - Get job details
-- `DELETE /api/jobs/:id` - Delete job
-- `GET /api/jobs/:id/download` - Download results (md/json)
-
-### Schemas
-
-- `POST /api/schemas` - Create extraction schema
-- `GET /api/schemas` - List schemas
-- `GET /api/schemas/:id` - Get schema
-- `PATCH /api/schemas/:id` - Update schema
-- `DELETE /api/schemas/:id` - Delete schema
-- `POST /api/schemas/generate` - AI-generate schema from document
-
-### WebSocket
-
-- `WS /ws/jobs/:jobId` - Real-time job status updates
-
-## Available Scripts
-
-- `bun run dev` - Start all applications
-- `bun run build` - Build all applications
-- `bun run typecheck` - TypeScript type checking
-- `bun run lint` - Lint all packages
-- `bun run db:push` - Push schema to database
-- `bun run db:studio` - Open database studio
-- `bun run db:generate` - Generate migrations
-- `bun run db:migrate` - Run migrations
+| Command               | Description         |
+| --------------------- | ------------------- |
+| `bun run dev`         | Start all services  |
+| `bun run dev:server`  | Start API only      |
+| `bun run dev:web`     | Start frontend only |
+| `bun run build`       | Build all packages  |
+| `bun run check-types` | TypeScript checking |
+| `bun run db:push`     | Push schema to DB   |
+| `bun run db:studio`   | Open Drizzle Studio |
+| `bun run db:migrate`  | Run migrations      |
 
 ## Docker Deployment
 

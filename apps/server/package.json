@@ -27,10 +27,10 @@
     "better-auth": "catalog:",
     "bullmq": "^5.66.5",
     "dotenv": "catalog:",
-    "drizzle-orm": "^0.45.1",
-    "elysia": "^1.4.22",
+    "drizzle-orm": "catalog:",
+    "elysia": "catalog:",
     "ioredis": "^5.9.2",
-    "nanoid": "^5.1.6",
+    "nanoid": "catalog:",
     "pino": "^10.2.1",
     "zod": "catalog:"
   },
