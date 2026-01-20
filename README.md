@@ -61,56 +61,6 @@ client.ws.subscribeToJob(job.id, {
 const result = await client.jobs.get(job.id);
 ```
 
-### React Integration
-
-```bash
-bun add @ocrbase/sdk @tanstack/react-query
-```
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  OCRBaseProvider,
-  useJobs,
-  useCreateJob,
-  useJobSubscription,
-} from "@ocrbase/sdk/react";
-
-const queryClient = new QueryClient();
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <OCRBaseProvider config={{ baseUrl: "http://localhost:3000" }}>
-        <DocumentProcessor />
-      </OCRBaseProvider>
-    </QueryClientProvider>
-  );
-}
-
-function DocumentProcessor() {
-  const { data: jobs } = useJobs({ status: "completed" });
-  const createJob = useCreateJob();
-
-  const handleUpload = (file: File) => {
-    createJob.mutate({ file, type: "parse" });
-  };
-
-  return (
-    <div>
-      <input type="file" onChange={(e) => handleUpload(e.target.files![0])} />
-      <ul>
-        {jobs?.data.map((job) => (
-          <li key={job.id}>
-            {job.fileName} - {job.status}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-```
-
 See [`packages/sdk/README.md`](./packages/sdk/README.md) for complete SDK documentation.
 
 ## Self-Hosting
@@ -119,6 +69,7 @@ See [`packages/sdk/README.md`](./packages/sdk/README.md) for complete SDK docume
 
 - [Bun](https://bun.sh/) installed globally
 - Docker Desktop running
+- **GPU for OCR**: PaddleOCR-VL-0.9B requires a CUDA-capable GPU with at least 12GB VRAM (tested on RTX 3060 12GB)
 
 ### 1. Clone and Install
 
