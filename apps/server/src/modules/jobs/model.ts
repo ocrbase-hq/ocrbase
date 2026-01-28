@@ -51,7 +51,7 @@ const JobResponse = Type.Object({
   createdAt: Type.String(),
   errorCode: Type.Union([Type.String(), Type.Null()]),
   errorMessage: Type.Union([Type.String(), Type.Null()]),
-  fileKey: Type.String(),
+  fileKey: Type.Union([Type.String(), Type.Null()]),
   fileName: Type.String(),
   fileSize: Type.Number(),
   id: Type.String({ pattern: JOB_ID_PATTERN }),

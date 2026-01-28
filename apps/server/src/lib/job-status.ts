@@ -123,3 +123,23 @@ export const getJobById = (jobId: string) =>
       schema: true,
     },
   });
+
+export const updateJobFileInfo = async (
+  jobId: string,
+  fileInfo: {
+    fileKey: string;
+    fileName: string;
+    fileSize: number;
+    mimeType: string;
+  }
+): Promise<void> => {
+  await db
+    .update(jobs)
+    .set({
+      fileKey: fileInfo.fileKey,
+      fileName: fileInfo.fileName,
+      fileSize: fileInfo.fileSize,
+      mimeType: fileInfo.mimeType,
+    })
+    .where(eq(jobs.id, jobId));
+};

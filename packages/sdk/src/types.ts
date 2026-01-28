@@ -58,7 +58,7 @@ export interface JobResponse {
   type: JobType;
   status: JobStatus;
   fileName: string;
-  fileKey: string;
+  fileKey: string | null;
   fileSize: number;
   mimeType: string;
   sourceUrl: string | null;
