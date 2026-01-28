@@ -28,7 +28,7 @@ export const jobs = pgTable(
     type: jobTypeEnum("type").notNull(),
     status: jobStatusEnum("status").notNull().default("pending"),
     fileName: text("file_name").notNull(),
-    fileKey: text("file_key").notNull(),
+    fileKey: text("file_key"),
     fileSize: integer("file_size").notNull(),
     mimeType: text("mime_type").notNull(),
     sourceUrl: text("source_url"),
