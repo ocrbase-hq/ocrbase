@@ -9,23 +9,44 @@ import { authRoutes } from "./modules/auth";
 import { extractRoutes } from "./modules/extract";
 import { healthRoutes } from "./modules/health";
 import { jobsRoutes } from "./modules/jobs";
+import { JobModel } from "./modules/jobs/model";
 import { jobsWebSocket } from "./modules/jobs/websocket";
 import { keysRoutes } from "./modules/keys";
+import { KeyModel } from "./modules/keys/model";
 import { parseRoutes } from "./modules/parse";
 import { schemasRoutes } from "./modules/schemas";
+import { SchemaModel } from "./modules/schemas/model";
 import { errorHandlerPlugin } from "./plugins/errorHandler";
 import { rateLimitPlugin } from "./plugins/rateLimit";
 import { securityPlugin } from "./plugins/security";
 import { wideEventPlugin } from "./plugins/wide-event";
 
 export const app = new Elysia()
+  .model({
+    "job.create": JobModel.CreateJobBody,
+    "job.createFromUrl": JobModel.CreateJobFromUrl,
+    "job.listQuery": JobModel.ListJobsQuery,
+    "job.listResponse": JobModel.ListJobsResponse,
+    "job.response": JobModel.JobResponse,
+    "key.create": KeyModel.createBody,
+    "key.createResponse": KeyModel.createResponse,
+    "key.listResponse": KeyModel.listResponse,
+    "key.response": KeyModel.response,
+    "key.usageResponse": KeyModel.usageResponse,
+    "schema.create": SchemaModel.createBody,
+    "schema.generate": SchemaModel.generateBody,
+    "schema.generateResponse": SchemaModel.generateResponse,
+    "schema.listResponse": SchemaModel.listResponse,
+    "schema.response": SchemaModel.response,
+    "schema.update": SchemaModel.updateBody,
+  })
   .use(
     openapi({
       documentation: {
         info: {
           description:
             "API for OCR document processing and structured data extraction",
-          title: "OCRBase API",
+          title: "ocrbase API",
           version: "1.0.0",
         },
         tags: [

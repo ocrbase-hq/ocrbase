@@ -1,4 +1,4 @@
-# OCRBase
+# ocrbase
 
 Turn PDFs into structured data at scale. Powered by frontier open-weight OCR models with a type-safe TypeScript SDK.
 

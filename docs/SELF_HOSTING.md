@@ -1,6 +1,6 @@
-# Self-Hosting OCRBase
+# Self-Hosting ocrbase
 
-Complete guide for deploying OCRBase on your own infrastructure.
+Complete guide for deploying ocrbase on your own infrastructure.
 
 ## Prerequisites
 
@@ -33,7 +33,7 @@ The API will be available at `http://localhost:3000`.
 
 ## PaddleOCR-VL Setup
 
-OCRBase requires a PaddleOCR-VL service. Choose one option:
+ocrbase requires a PaddleOCR-VL service. Choose one option:
 
 ### Option 1: External URL (Recommended)
 

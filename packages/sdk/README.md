@@ -1,6 +1,6 @@
 # ocrbase
 
-Type-safe SDK for OCRBase - document parsing and data extraction API.
+Type-safe SDK for ocrbase - document parsing and data extraction API.
 
 ## Installation
 

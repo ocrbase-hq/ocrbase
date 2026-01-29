@@ -14,7 +14,7 @@ export const env = createEnv({
     DEPLOYMENT_ID: z.string().optional(),
     GITHUB_CLIENT_ID: z.string().optional(),
     GITHUB_CLIENT_SECRET: z.string().optional(),
-    HOST: z.string().default("localhost"),
+    HOST: z.string().default("0.0.0.0"),
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),

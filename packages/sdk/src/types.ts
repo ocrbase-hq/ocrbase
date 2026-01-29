@@ -23,10 +23,10 @@ export type OnResponseHook = (
 ) => Response | void | Promise<Response | void>;
 
 /**
- * Configuration for the OCRBase SDK client.
+ * Configuration for the ocrbase SDK client.
  */
 export interface SDKConfig {
-  /** Base URL of the OCRBase API server */
+  /** Base URL of the ocrbase API server */
   baseUrl: string;
 
   /** API key for authentication (recommended) */
