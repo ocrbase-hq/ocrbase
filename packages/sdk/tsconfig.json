@@ -5,9 +5,9 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
-    "composite": true,
     "strictNullChecks": true,
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM"]
-  }
+  },
+  "include": ["src"]
 }

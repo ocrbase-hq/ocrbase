@@ -15,9 +15,9 @@
     "worker": "bun run src/workers/job.worker.ts"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^3.0.21",
-    "@aws-sdk/client-s3": "^3.975.0",
-    "@aws-sdk/s3-request-presigner": "^3.975.0",
+    "@ai-sdk/openai": "^3.0.23",
+    "@aws-sdk/client-s3": "^3.978.0",
+    "@aws-sdk/s3-request-presigner": "^3.978.0",
     "@elysiajs/cors": "^1.4.1",
     "@elysiajs/openapi": "^1.4.14",
     "@ocrbase/auth": "workspace:*",
@@ -25,7 +25,7 @@
     "@ocrbase/env": "workspace:*",
     "@ocrbase/paddleocr-vl-ts": "workspace:*",
     "@sinclair/typebox": "^0.34.48",
-    "ai": "^6.0.57",
+    "ai": "^6.0.62",
     "better-auth": "catalog:",
     "bullmq": "^5.67.2",
     "dotenv": "catalog:",
