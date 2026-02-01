@@ -7,6 +7,7 @@
     "build": "tsdown",
     "check-types": "tsc --noEmit",
     "compile": "bun build --compile --minify-whitespace --minify-syntax --sourcemap --bytecode ./src/index.ts --outfile server && bun build --compile --minify-whitespace --minify-syntax --sourcemap --bytecode ./src/workers/job.worker.ts --outfile worker",
+    "generate-openapi": "bun run scripts/generate-openapi.ts",
     "compile:cluster": "bun build --compile --minify-whitespace --minify-syntax --sourcemap --bytecode ./src/cluster.ts --outfile server-cluster",
     "dev": "bun run --hot src/index.ts | bun x pino-pretty",
     "dev:worker": "bun run --hot src/workers/job.worker.ts",

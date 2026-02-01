@@ -18,21 +18,19 @@ RUN bun install --ignore-scripts
 # Copy source code
 COPY . .
 
-# Build the server binary
+# Build the server binary and generate OpenAPI spec
 WORKDIR /app/apps/server
-RUN bun run compile
+RUN mkdir -p dist && bun run ./scripts/generate-openapi.ts && bun run compile
 
 # Production stage - minimal distroless image
 FROM gcr.io/distroless/base-debian12:nonroot
 
 WORKDIR /app
 
-# Copy the compiled binaries
+# Copy the compiled binaries and pre-generated OpenAPI spec
 COPY --from=builder /app/apps/server/server /app/server
 COPY --from=builder /app/apps/server/worker /app/worker
-
-# Copy server source files for OpenAPI schema generation
-COPY --from=builder /app/apps/server/src /app/apps/server/src
+COPY --from=builder /app/apps/server/dist/openapi.json /app/apps/server/dist/openapi.json
 
 # Expose port
 EXPOSE 3000

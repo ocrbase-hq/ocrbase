@@ -21,6 +21,81 @@ import { rateLimitPlugin } from "./plugins/rateLimit";
 import { securityPlugin } from "./plugins/security";
 import { wideEventPlugin } from "./plugins/wide-event";
 
+// Load pre-generated OpenAPI spec in production
+const loadStaticOpenApiSpec = async () => {
+  if (env.NODE_ENV !== "production") {
+    return null;
+  }
+  try {
+    const file = Bun.file(
+      path.resolve(import.meta.dir, "../dist/openapi.json")
+    );
+    return await file.json();
+  } catch {
+    console.warn(
+      "Pre-generated OpenAPI spec not found, falling back to dynamic generation"
+    );
+    return null;
+  }
+};
+
+const staticSpec = await loadStaticOpenApiSpec();
+
+// Static OpenAPI plugin for production (serves cached spec + Scalar UI)
+const staticOpenApi = (spec: object) => {
+  // Pre-serialize at startup to avoid per-request serialization
+  const html = `<!doctype html>
+<html>
+  <head>
+    <title>ocrbase API</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <script id="api-reference" data-url="/openapi/json"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+  </body>
+</html>`;
+  const json = JSON.stringify(spec);
+
+  return new Elysia()
+    .get("/openapi", ({ set }) => {
+      set.headers["content-type"] = "text/html";
+      return html;
+    })
+    .get("/openapi/json", ({ set }) => {
+      set.headers["content-type"] = "application/json";
+      return json;
+    });
+};
+
+// Dynamic OpenAPI plugin for development
+const dynamicOpenApi = () =>
+  openapi({
+    documentation: {
+      info: {
+        description:
+          "API for OCR document processing and structured data extraction",
+        title: "ocrbase API",
+        version: "1.0.0",
+      },
+      tags: [
+        { description: "Health check endpoints", name: "Health" },
+        { description: "Authentication endpoints", name: "Auth" },
+        { description: "Organization management", name: "Organization" },
+        { description: "Document parsing (OCR to markdown)", name: "Parse" },
+        { description: "Structured data extraction", name: "Extract" },
+        { description: "OCR job management", name: "Jobs" },
+        { description: "API key management", name: "Keys" },
+        { description: "Extraction schema management", name: "Schemas" },
+      ],
+    },
+    path: "/openapi",
+    references: fromTypes("src/index.ts", {
+      projectRoot: path.resolve(import.meta.dir, ".."),
+    }),
+  });
+
 export const app = new Elysia()
   .model({
     "job.create": JobModel.CreateJobBody,
@@ -40,35 +115,7 @@ export const app = new Elysia()
     "schema.response": SchemaModel.response,
     "schema.update": SchemaModel.updateBody,
   })
-  .use(
-    openapi({
-      documentation: {
-        info: {
-          description:
-            "API for OCR document processing and structured data extraction",
-          title: "ocrbase API",
-          version: "1.0.0",
-        },
-        tags: [
-          { description: "Health check endpoints", name: "Health" },
-          { description: "Authentication endpoints", name: "Auth" },
-          { description: "Organization management", name: "Organization" },
-          { description: "Document parsing (OCR to markdown)", name: "Parse" },
-          { description: "Structured data extraction", name: "Extract" },
-          { description: "OCR job management", name: "Jobs" },
-          { description: "API key management", name: "Keys" },
-          { description: "Extraction schema management", name: "Schemas" },
-        ],
-      },
-      path: "/openapi",
-      references: fromTypes(
-        env.NODE_ENV === "production" ? "dist/src/index.d.ts" : "src/index.ts",
-        {
-          projectRoot: path.resolve(import.meta.dir, ".."),
-        }
-      ),
-    })
-  )
+  .use(staticSpec ? staticOpenApi(staticSpec) : dynamicOpenApi())
   .use(
     cors({
       allowedHeaders: ["Content-Type", "Authorization"],
