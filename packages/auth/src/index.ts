@@ -38,6 +38,21 @@ export const auth = betterAuth({
       httpOnly: true,
     },
   },
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          await auth.api.createOrganization({
+            body: {
+              name: "Personal",
+              slug: `personal-${user.id}`,
+              userId: user.id,
+            },
+          });
+        },
+      },
+    },
+  },
   plugins: [
     organization({
       allowUserToCreateOrganization: true,
