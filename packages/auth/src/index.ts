@@ -4,6 +4,7 @@ import { env } from "@ocrbase/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { organization } from "better-auth/plugins";
+import { nanoid } from "nanoid";
 
 const buildSocialProviders = () => {
   const providers: Record<string, { clientId: string; clientSecret: string }> =
@@ -42,12 +43,17 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
-          await auth.api.createOrganization({
-            body: {
-              name: "Personal",
-              slug: `personal-${user.id}`,
-              userId: user.id,
-            },
+          const orgId = nanoid();
+          await db.insert(schema.organization).values({
+            id: orgId,
+            name: "Personal",
+            slug: `personal-${user.id}`,
+          });
+          await db.insert(schema.member).values({
+            id: nanoid(),
+            organizationId: orgId,
+            userId: user.id,
+            role: "owner",
           });
         },
       },
