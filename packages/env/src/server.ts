@@ -21,6 +21,7 @@ export const env = createEnv({
     OPENROUTER_API_KEY: z.string().optional(),
     PADDLE_OCR_URL: z.url().default("http://localhost:8080"),
     PORT: z.coerce.number().default(3000),
+    POSTHOG_API_KEY: z.string().optional(),
     REDIS_URL: z.url().optional(),
     REGION: z.string().optional(),
     S3_ACCESS_KEY: z.string().optional(),

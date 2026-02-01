@@ -35,6 +35,7 @@
     "ioredis": "^5.9.2",
     "nanoid": "catalog:",
     "pino": "^10.3.0",
+    "posthog-node": "^5.24.7",
     "zod": "catalog:"
   },
   "devDependencies": {

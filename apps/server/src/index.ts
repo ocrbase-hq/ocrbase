@@ -1,6 +1,7 @@
 import { env } from "@ocrbase/env/server";
 
 import { app, type App } from "./app";
+import { shutdownPosthog } from "./lib/posthog";
 
 const startServer = (): void => {
   app.listen(env.PORT, () => {
@@ -10,6 +11,14 @@ const startServer = (): void => {
     );
   });
 };
+
+const shutdown = async () => {
+  await shutdownPosthog();
+  process.exit(0);
+};
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
 
 startServer();
 
