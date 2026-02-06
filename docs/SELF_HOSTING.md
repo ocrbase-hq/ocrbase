@@ -110,22 +110,22 @@ GITHUB_CLIENT_SECRET=your-github-client-secret
 
 ### REST Endpoints
 
-| Method   | Endpoint                 | Description                |
-| -------- | ------------------------ | -------------------------- |
-| `GET`    | `/v1/health/live`           | Liveness check             |
-| `GET`    | `/v1/health/ready`          | Readiness check            |
-| `POST`   | `/v1/parse`                 | Parse document to markdown |
-| `POST`   | `/v1/extract`               | Extract structured data    |
-| `GET`    | `/v1/jobs`                  | List jobs                  |
-| `GET`    | `/v1/jobs/:id`              | Get job                    |
-| `DELETE` | `/v1/jobs/:id`              | Delete job                 |
-| `GET`    | `/v1/jobs/:id/download`     | Download result            |
-| `POST`   | `/v1/schemas`               | Create schema              |
-| `GET`    | `/v1/schemas`               | List schemas               |
-| `GET`    | `/v1/schemas/:id`           | Get schema                 |
-| `PATCH`  | `/v1/schemas/:id`           | Update schema              |
-| `DELETE` | `/v1/schemas/:id`           | Delete schema              |
-| `POST`   | `/v1/schemas/generate`      | AI-generate schema         |
+| Method   | Endpoint                | Description                |
+| -------- | ----------------------- | -------------------------- |
+| `GET`    | `/v1/health/live`       | Liveness check             |
+| `GET`    | `/v1/health/ready`      | Readiness check            |
+| `POST`   | `/v1/parse`             | Parse document to markdown |
+| `POST`   | `/v1/extract`           | Extract structured data    |
+| `GET`    | `/v1/jobs`              | List jobs                  |
+| `GET`    | `/v1/jobs/:id`          | Get job                    |
+| `DELETE` | `/v1/jobs/:id`          | Delete job                 |
+| `GET`    | `/v1/jobs/:id/download` | Download result            |
+| `POST`   | `/v1/schemas`           | Create schema              |
+| `GET`    | `/v1/schemas`           | List schemas               |
+| `GET`    | `/v1/schemas/:id`       | Get schema                 |
+| `PATCH`  | `/v1/schemas/:id`       | Update schema              |
+| `DELETE` | `/v1/schemas/:id`       | Delete schema              |
+| `POST`   | `/v1/schemas/generate`  | AI-generate schema         |
 
 ### WebSocket
 
